@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flipkart Review Sentiment Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Include Chart.js for pie chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Review Analysis</h1>
+        <form id="productForm">
+            <div class="input-section">
+                <input type="text" id="productInput" name="product_name" placeholder="Enter product name..." required>
+                <button id="analyzeBtn" type="submit">Analyze Reviews</button>
+            </div>
+        </form>
+        <div class="result-section">
+            <h2>Sentiment Distribution</h2>
+            <div class="chart-container">
+                <canvas id="sentimentChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize the pie chart with default (empty) data
+        const ctx = document.getElementById('sentimentChart').getContext('2d');
+        const sentimentChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Positive', 'Negative', 'Neutral', 'Error'],
+                datasets: [{
+                    data: [0, 0, 0, 0], // Initial counts
+                    backgroundColor: ['#28a745', '#dc3545', '#ff8c00', '#6c757d'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: true, text: 'Sentiment Distribution' }
+                }
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('productForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent page reload
+
+            const productName = document.getElementById('productInput').value.trim();
+            if (!productName) {
+                alert("Please enter a product name!");
+                return;
+            }
+
+            const formData = new FormData(this);
+
+            fetch('/analyze', { // Assuming your endpoint is '/analyze'
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                // Update chart with counts from backend
+                sentimentChart.data.datasets[0].data = [
+                    data.Positive || 0,
+                    data.Negative || 0,
+                    data.Neutral || 0,
+                    data.Error || 0
+                ];
+                sentimentChart.update(); // Refresh the chart
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to analyze reviews. Check console for details.');
+            });
+        });
+    </script>
+</body>
+</html>
