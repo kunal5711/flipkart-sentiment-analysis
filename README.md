@@ -3,6 +3,18 @@
 ## Overview
 This project is a web application that analyzes the sentiment of Flipkart product reviews. Users input a product name, and the app fetches reviews (to be implemented), performs sentiment analysis, and displays the distribution of sentiments ("Positive," "Negative," "Neutral," "Error") in a pie chart. The backend uses a pre-trained XGBoost model with a `CountVectorizer` and `MinMaxScaler` for text processing, while the front-end is built with HTML, CSS, and Chart.js for visualization.
 
+---
+
+## Screenshots
+
+- **Main Interface**:
+  ![Main Interface](screenshots/main.png)
+
+- **Getting the statistics**:
+  ![Stats](screenshots/stats.png)
+
+---
+
 ## Features
 - **Input**: Enter a product name to analyze its reviews.
 - **Sentiment Analysis**: Classifies reviews into Positive, Negative, Neutral, or Error categories.
